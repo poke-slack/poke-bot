@@ -11,7 +11,7 @@ class RandomPoke
 
     puts "picked pokemon: #{poke_name}"
 
-    puts "uploading!"
+    puts "uploading to channel #{channel_name}!"
 
     result = client.web_client.files_upload(
         channels: "#{channel_name}",
@@ -21,16 +21,6 @@ class RandomPoke
         filename: poke_file,
         initial_comment: "spotted: #{poke_name}"
     )
-
-
-    sleep 30.seconds
-
-    client.web_client.files_delete(file: result.file.id)
-debugger
-    client.web_client.message channel: channel_name, text: "Sorry! You missed a #{poke_name}"
-
-
-    puts result.inspect
-    puts result
+    return result,poke_name
   end
 end
