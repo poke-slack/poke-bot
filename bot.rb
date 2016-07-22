@@ -1,5 +1,6 @@
 require 'slack-ruby-client'
 require 'logging'
+require 'byebug'
 
 logger = Logging.logger(STDOUT)
 logger.level = :debug
@@ -56,8 +57,21 @@ client.on :message do |data|
     client.message channel: data['channel'], text: help
     logger.debug("A call for help")
 
-    when 'pokemon' then
-      client.message channel: data['channel'], text: "did you mean, pokeyman?"
+  when 'pokemon' then
+    client.message channel: data['channel'], text: "did you mean, pokeyman?"
+
+  when 'doit' then
+    client.web_client.files_upload(
+      channels: '#testbottest',
+      as_user: true,
+      file: Faraday::UploadIO.new('resources/pokemon.png', 'image/png'),
+      title: 'Pokemon',
+      filename: 'pokemon.png',
+      initial_comment: 'Hello.'
+  )
+
+  when 'doit3' then
+    client.web_client.channels_join({name: "#doit3"})
 
   when /^bot/ then
     client.message channel: data['channel'], text: "Sorry <@#{data['user']}>, I don\'t understand. \n#{help}"
@@ -76,7 +90,7 @@ def bot_mentioned(client)
 end
 
 def joiner_is_bot?(client, data)
- /^\<\@#{client.self['id']}\>/.match data['channel']['latest']['text']
+ /^\<\@#{client.self['id']}\>/.match data['channel']['latest']['text'] rescue false
 end
 
 def help
