@@ -1,6 +1,7 @@
 require 'slack-ruby-client'
 require 'logging'
 require 'byebug'
+require_relative 'random_poke.rb'
 
 logger = Logging.logger(STDOUT)
 logger.level = :debug
@@ -72,6 +73,10 @@ client.on :message do |data|
 
   when 'doit3' then
     client.web_client.channels_join({name: "#doit3"})
+
+  when 'doit4' then
+    client.message channel: data['channel'], text: "OK one sec"
+    RandomPoke.perform(client)
 
   when /^bot/ then
     client.message channel: data['channel'], text: "Sorry <@#{data['user']}>, I don\'t understand. \n#{help}"
