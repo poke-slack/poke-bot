@@ -6,19 +6,31 @@ class RandomPoke
   end
 
   def perform(client,channel_name)
-    poke = POKES.sample
+    poke_file = POKES.sample
+    poke_name = poke_file.split(".")[0]
 
-    puts "picked pokemon: #{poke}"
+    puts "picked pokemon: #{poke_name}"
 
     puts "uploading!"
 
-    client.web_client.files_upload(
+    result = client.web_client.files_upload(
         channels: "#{channel_name}",
         as_user: true,
-        file: Faraday::UploadIO.new("resources/#{poke}", 'image/jpg'),
-        title: poke,
-        filename: poke,
-        initial_comment: "spotted: #{poke}"
+        file: Faraday::UploadIO.new("resources/#{poke_file}", 'image/jpg'),
+        title: poke_name,
+        filename: poke_file,
+        initial_comment: "spotted: #{poke_name}"
     )
+
+
+    sleep 30.seconds
+
+    client.web_client.files_delete(file: result.file.id)
+debugger
+    client.web_client.message channel: channel_name, text: "Sorry! You missed a #{poke_name}"
+
+
+    puts result.inspect
+    puts result
   end
 end

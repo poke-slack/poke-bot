@@ -75,7 +75,6 @@ client.on :message do |data|
     client.web_client.channels_join({name: "#doit3"})
 
   when 'doit4' then
-    client.message channel: data['channel'], text: "OK one sec"
     RandomPoke.perform(client)
 
   when /^bot/ then
